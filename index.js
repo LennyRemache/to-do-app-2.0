@@ -13,6 +13,7 @@ addBtn.addEventListener("click", () => {
     const task = inputText.value;
     if (task.length === 0) {
         inputText.setAttribute("placeholder",  "Please enter a task!");
+        inputText.style.color = "crimson";
         return;
     }
     else {
@@ -29,7 +30,7 @@ function renderTasks() {
 
     let allTasks = ""
     todos.forEach(todo => {
-        console.log(todo);
+        //console.log(todo);
         allTasks += `
         <div class="task">
             <input class="task-txt" type="text" value=${todo} readonly />
@@ -61,6 +62,11 @@ function renderTasks() {
                 // taskTexts[id].setAttribute("readonly", "true");
                 // taskTexts[id].style.color = "white";
                 //console.log(taskTexts[id].value);
+                if (taskTexts[id].value.length === 0) {
+                    todos.splice(id, 1);
+                    renderTasks();
+                    return;
+                }
                 todos[id] = taskTexts[id].value;
                 //console.log(todos);
                 renderTasks();
