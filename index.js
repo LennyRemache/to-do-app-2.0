@@ -1,14 +1,13 @@
 const inputText = document.querySelector(".input-txt");
 const addBtn = document.querySelector(".add-btn");
 const mainEl = document.querySelector("main");
+let todos = [];
 
-//const currTasks = JSON.parse(localStorage.getItem("myTasks"));
-//console.log(currTasks);
-// if (currTasks) {
-//     currTasks.forEach(task => {
-//         mainEl.innerHTML += task;
-//     })
-// };
+const currTasks = JSON.parse(localStorage.getItem("myTasks"))
+if (currTasks) {
+    todos = currTasks;
+    renderTasks();
+}
 
 addBtn.addEventListener("click", () => {
     const task = inputText.value;
@@ -20,29 +19,33 @@ addBtn.addEventListener("click", () => {
         inputText.setAttribute("placeholder",  "Your Task Here");
     }
     inputText.value = "";
-    mainEl.innerHTML += `
+    todos.push(task);
+    renderTasks();
+});
+
+function renderTasks() {
+
+    localStorage.setItem("myTasks", JSON.stringify(todos))
+
+    let allTasks = ""
+    todos.forEach(todo => {
+        console.log(todo);
+        allTasks += `
         <div class="task">
-            <input class="task-txt" type="text" value=${task} readonly />
+            <input class="task-txt" type="text" value=${todo} readonly />
             <div class="action-btns">
                 <input class="edit-btn" type="button" value="EDIT" />
                 <input class="del-btn" type="button" value="DELETE" />
             </div>
         </div>
-    `;
+        `;
+    });
+    mainEl.innerHTML = allTasks;
 
     const tasks = [...document.querySelectorAll(".task")];
-    //console.log(tasks);
     const taskTexts = [...document.querySelectorAll(".task-txt")];
     const editBtns = [...document.querySelectorAll(".edit-btn")];
     const delBtns = [...document.querySelectorAll(".del-btn")];
-
-    //localStorage.setItem("myTasks", [...tasks]);
-    // let taskArr = [];
-    // tasks.forEach(test => {
-    //     console.log(test.outerHTML);
-    //     taskArr.push(test.outerHTML);
-    // });
-    // localStorage.setItem("myTasks", JSON.stringify(taskArr));
 
     editBtns.forEach(btn => {
         btn.addEventListener("click", () => {
@@ -52,12 +55,15 @@ addBtn.addEventListener("click", () => {
                 taskTexts[id].removeAttribute("readonly");
                 taskTexts[id].style.color = "crimson";
                 taskTexts[id].focus();
-                //taskTexts[id].value = taskTexts[id].value;
             }
             else {
-                btn.value = "EDIT";
-                taskTexts[id].setAttribute("readonly", "true");
-                taskTexts[id].style.color = "white";
+                // btn.value = "EDIT";
+                // taskTexts[id].setAttribute("readonly", "true");
+                // taskTexts[id].style.color = "white";
+                //console.log(taskTexts[id].value);
+                todos[id] = taskTexts[id].value;
+                //console.log(todos);
+                renderTasks();
             }
         });
     });
@@ -65,8 +71,8 @@ addBtn.addEventListener("click", () => {
     delBtns.forEach(btn => {
         btn.addEventListener("click", () => {
             const id = delBtns.indexOf(btn);
-            tasks[id].remove();
-
+            todos.splice(id, 1);
+            renderTasks();
         });
     });
-});
+}
